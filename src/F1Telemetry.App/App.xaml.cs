@@ -1,8 +1,8 @@
-﻿using F1Telemetry.Core.Services;
+﻿using F1Telemetry.App.ViewModels;
+using F1Telemetry.Core.Interfaces;
+using F1Telemetry.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace F1Telemetry.App
@@ -23,17 +23,24 @@ namespace F1Telemetry.App
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ITelemetryWriter, TelemetryService>();
-            services.AddSingleton<ITelemetryReader, TelemetryService>();
-            services.AddSingleton<TelemetryProducer>();
+            services.AddSingleton<ITelemetryService, TelemetryService>();
+            services.AddSingleton<ITelemetrySource, FakeTelemetrySource>();
+
+            services.AddSingleton<MainWindow>();
+            services.AddSingleton<MainViewModel>();
+
+            services.AddHostedService<TelemetryProducer>();
             services.AddSingleton<TelemetryConsumer>();
+            services.AddHostedService(sp =>
+                sp.GetRequiredService<TelemetryConsumer>());
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await _host.StartAsync();
-
             base.OnStartup(e);
+            await _host.StartAsync();
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
         }
 
         protected override async void OnExit(ExitEventArgs e)

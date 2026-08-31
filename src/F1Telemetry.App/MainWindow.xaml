@@ -4,9 +4,54 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:F1Telemetry.App"
+        xmlns:viewmodels="clr-namespace:F1Telemetry.App.ViewModels"
+        xmlns:converters="clr-namespace:F1Telemetry.App.Converters"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
+    <Window.Resources>
+        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel Margin="20">
+            <TextBlock Text="F1 TELEMETRY" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,20" />
+            <UniformGrid Columns="3" Rows="2">
+                <StackPanel>
+                    <TextBlock Text="SPEED" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Telemetry.Speed}" FontSize="32" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="RPM" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Telemetry.Rpm}" FontSize="32" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="GEAR" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Telemetry.Gear}" FontSize="32" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="THROTTLE" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Telemetry.Throttle}" FontSize="32" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="BRAKE" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Telemetry.Brake}" FontSize="32" HorizontalAlignment="Center" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="DRS" HorizontalAlignment="Center" />
+                    <Ellipse Width="30"
+             Height="30"
+             HorizontalAlignment="Center"   
+             Fill="{Binding Telemetry.DrsActive,
+                            Converter={StaticResource BoolToBrushConverter}}"/>
+                </StackPanel>
+            </UniformGrid>
+
+            <Button Content="Reset"
+                Command="{Binding ResetCommand}"
+                Width="100"
+                Margin="0,20,0,0" />
+        </StackPanel>
     </Grid>
 </Window>

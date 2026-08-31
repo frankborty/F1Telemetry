@@ -1,13 +1,7 @@
-﻿using System.Text;
+﻿using F1Telemetry.App.ViewModels;
+using F1Telemetry.Core.Models;
+using F1Telemetry.Core.Services;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace F1Telemetry.App
 {
@@ -16,9 +10,27 @@ namespace F1Telemetry.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly MainViewModel _viewModel;
+        private readonly TelemetryConsumer _telemetryConsumer;
+        public MainWindow(TelemetryConsumer telemetryConsumer, MainViewModel viewModel)
         {
             InitializeComponent();
+
+            DataContext = viewModel;
+            _viewModel = viewModel;
+            _telemetryConsumer = telemetryConsumer;
+
+            telemetryConsumer.TelemetryReceived += OnTelemetryReceived;
+        }
+
+        private async void OnTelemetryReceived(TelemetryData telemetryData)
+        {
+            _viewModel.UpdateTelemetry(telemetryData);
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            _telemetryConsumer.TelemetryReceived -= OnTelemetryReceived;
+            base.OnClosed(e);
         }
     }
 }

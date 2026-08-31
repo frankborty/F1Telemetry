@@ -1,25 +1,31 @@
-﻿using F1Telemetry.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using F1Telemetry.Core.Interfaces;
+using F1Telemetry.Core.Models;
+using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace F1Telemetry.Core.Services
 {
-    internal class TelemetryConsumer
+    public class TelemetryConsumer : BackgroundService
     {
-        private readonly ITelemetryReader _telemetryReader;
+        public event Action<TelemetryData>? TelemetryReceived;
+        private readonly ITelemetryService _telemetryService;
 
-        public TelemetryProducer(ITelemetryReader telemetryReader)
+        public TelemetryConsumer(ITelemetryService telemetryService)
         {
-            _telemetryReader = telemetryReader;
+            _telemetryService = telemetryService;
         }
 
-        public async Task ConsumeAsync(CancellationToken cancellationToken = default)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await foreach (var telemetryData in _telemetryReader.GetTelemetryAsync(cancellationToken))
+            try
             {
-                Console.WriteLine($"Received telemetry data: {telemetryData}");
+                await foreach (var telemetryData in
+                    _telemetryService.GetTelemetryAsync(cancellationToken))
+                {
+                    TelemetryReceived?.Invoke(telemetryData);
+                }
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested){ }
         }
     }
 }
