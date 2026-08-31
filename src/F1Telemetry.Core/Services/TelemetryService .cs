@@ -1,0 +1,33 @@
+﻿using F1Telemetry.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Channels;
+
+namespace F1Telemetry.Core.Services
+{
+    public sealed class TelemetryService : ITelemetryReader, ITelemetryWriter
+    {
+        private readonly Channel<TelemetryData> _channel;
+
+        public TelemetryService()
+        {
+            _channel = Channel.CreateUnbounded<TelemetryData>();
+        }
+
+        public async IAsyncEnumerable<TelemetryData> GetTelemetryAsync(
+            [System.Runtime.CompilerServices.EnumeratorCancellation]
+            CancellationToken cancellationToken = default)
+        {
+            await foreach (var telemetry in _channel.Reader.ReadAllAsync(cancellationToken))
+            {
+                yield return telemetry;
+            }
+        }
+
+        public async Task WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default)
+        {
+            await _channel.Writer.WriteAsync(telemetryData, cancellationToken);
+        }
+    }
+}

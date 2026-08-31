@@ -1,1 +1,5 @@
-<Solution />
+<Solution>
+  <Project Path="src/F1Telemetry.App/F1Telemetry.App.csproj" />
+  <Project Path="src/F1Telemetry.Core/F1Telemetry.Core.csproj" />
+  <Project Path="src/F1Telemetry.Infrastructure/F1Telemetry.Infrastructure.csproj" />
+</Solution>
