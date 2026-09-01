@@ -85,14 +85,17 @@ F1Telemetry/
 La sorgente viene scelta dalla chiave `Telemetry:Source`:
 
 - `Fake` (default) → dati simulati generati casualmente ogni 100ms
-- `F1` → lettura UDP dal gioco sulla porta 20777
+- `F1` → lettura UDP dal gioco
+
+La porta UDP è configurabile con `Telemetry:UdpPort` (default `20777`).
 
 Modifica `src/F1Telemetry.App/appsettings.json`:
 
 ```json
 {
   "Telemetry": {
-    "Source": "F1"
+    "Source": "F1",
+    "UdpPort": 20777
   }
 }
 ```
@@ -103,7 +106,7 @@ Oppure da riga di comando:
 dotnet run --project src/F1Telemetry.App/F1Telemetry.App.csproj -- --Telemetry:Source=F1
 ```
 
-> Nota: nel gioco abilita la telemetria UDP su **porta 20777** prima di avviare l'applicazione.
+> Nota: nel gioco abilita la telemetria UDP sulla porta configurata (default **20777**) prima di avviare l'applicazione.
 
 ## Build ed Esecuzione
 
@@ -123,8 +126,8 @@ Oppure in Visual Studio: apri `F1Telemetry.slnx`, imposta `F1Telemetry.App` come
 - ✅ Sorgente UDP reale (`F1TelemetrySource`) con merging di CarTelemetry + CarStatus + LapData
 - ✅ Sorgente simulata e switch a runtime via configurazione
 - ✅ Dashboard UI dark theme completa
+- ✅ Chiusura esplicita del socket UDP (`IDisposable`, smaltita dalla DI) e porta UDP configurabile
 - ⬜ Test automatici (`tests/` vuota)
-- ⬜ Chiusura esplicita del socket UDP (`IDisposable`)
 - ⬜ Unità di misura coerenti tra sorgente reale e simulata (batteria/ERS)
 
 ## Licenza

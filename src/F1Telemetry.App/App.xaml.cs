@@ -25,11 +25,16 @@ namespace F1Telemetry.App
         private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             string? source = context.Configuration["Telemetry:Source"];
+            int udpPort = int.TryParse(
+                context.Configuration["Telemetry:UdpPort"],
+                out int configuredPort)
+                    ? configuredPort
+                    : 20777;
 
             services.AddSingleton<ITelemetryService, TelemetryService>();
             services.AddSingleton<ITelemetrySource>(_ =>
                 string.Equals(source, "F1", StringComparison.OrdinalIgnoreCase)
-                    ? new F1TelemetrySource()
+                    ? new F1TelemetrySource(udpPort)
                     : new FakeTelemetrySource());
 
             services.AddSingleton<MainWindow>();

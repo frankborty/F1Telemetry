@@ -9,15 +9,27 @@ using System.Runtime.CompilerServices;
 
 namespace F1Telemetry.Infrastructure
 {
-    public sealed class F1TelemetrySource : ITelemetrySource
+    public sealed class F1TelemetrySource : ITelemetrySource, IDisposable
     {
         private const int DefaultPort = 20777;
 
         private readonly UdpClient _udpClient;
+        private bool _disposed;
 
         public F1TelemetrySource(int port = DefaultPort)
         {
             _udpClient = new UdpClient(port);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _udpClient.Dispose();
         }
 
         public async IAsyncEnumerable<TelemetryData> GetTelemetryAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
