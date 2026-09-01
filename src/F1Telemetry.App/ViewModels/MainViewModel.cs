@@ -47,6 +47,7 @@ namespace F1Telemetry.App.ViewModels
 
         private void Reset()
         {
+            _latestTelemetry = null;
             Telemetry = null;
         }
     }

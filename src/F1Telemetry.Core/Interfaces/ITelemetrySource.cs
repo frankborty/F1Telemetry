@@ -4,6 +4,6 @@ namespace F1Telemetry.Core.Interfaces
 {
     public interface ITelemetrySource
     {
-        TelemetryData GetTelemetryData();
+        IAsyncEnumerable<TelemetryData> GetTelemetryAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="F1Game.UDP" Version="26.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\F1Telemetry.Core\F1Telemetry.Core.csproj" />
   </ItemGroup>
 

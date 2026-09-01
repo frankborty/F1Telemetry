@@ -1,6 +1,7 @@
 ﻿using F1Telemetry.App.ViewModels;
 using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Services;
+using F1Telemetry.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
@@ -21,10 +22,15 @@ namespace F1Telemetry.App
                 .Build();
         }
 
-        private static void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
+            string? source = context.Configuration["Telemetry:Source"];
+
             services.AddSingleton<ITelemetryService, TelemetryService>();
-            services.AddSingleton<ITelemetrySource, FakeTelemetrySource>();
+            services.AddSingleton<ITelemetrySource>(_ =>
+                string.Equals(source, "F1", StringComparison.OrdinalIgnoreCase)
+                    ? new F1TelemetrySource()
+                    : new FakeTelemetrySource());
 
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();

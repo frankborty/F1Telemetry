@@ -18,13 +18,10 @@ namespace F1Telemetry.Core.Services
         {
             try
             {
-                while (!cancellationToken.IsCancellationRequested)
+                await foreach (var telemetry in
+                    _telemetrySource.GetTelemetryAsync(cancellationToken))
                 {
-                    await _telemetryService.WriteAsync(
-                        _telemetrySource.GetTelemetryData(),
-                        cancellationToken);
-
-                    await Task.Delay(100, cancellationToken);
+                    await _telemetryService.WriteAsync(telemetry, cancellationToken);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
