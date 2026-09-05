@@ -1,5 +1,4 @@
 ﻿using F1Telemetry.App.Commands;
-using F1Telemetry.Core.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -23,7 +22,7 @@ namespace F1Telemetry.App.ViewModels
 
         private void AddDashboard()
         {
-            TelemetryDashboardVMList.Add(factory.Invoke());
+            TelemetryDashboardVMList.Add(factory());
         }
     }
 }
