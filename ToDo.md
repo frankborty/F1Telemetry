@@ -1,5 +1,7 @@
 # F1Telemetry — Roadmap
 
+> La pipeline di base, la cancellazione UDP, il contratto snapshot, la fake source, lo stato connessione, la dashboard e i primi test sono stati implementati. Restano come evoluzioni lo storico grafico, il replay e l'analisi strategica.
+
 ## Stato attuale
 
 * Applicazione WPF `.NET 10`

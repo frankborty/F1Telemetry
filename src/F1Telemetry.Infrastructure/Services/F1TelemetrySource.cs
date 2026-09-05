@@ -6,6 +6,7 @@ using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Models;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace F1Telemetry.Infrastructure.Services
 {
@@ -34,29 +35,67 @@ namespace F1Telemetry.Infrastructure.Services
 
         public async IAsyncEnumerable<TelemetryData> GetTelemetryAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            CarStatusData? status = null;
-            LapData? lap = null;
-            Array24<ParticipantData>? participants = null;
+            var statusByCar = new Dictionary<int, CarStatusData>();
+            var lapByCar = new Dictionary<int, LapData>();
+            var participantsByCar = new Dictionary<int, ParticipantData>();
+            ulong? sessionId = null;
             while (!cancellationToken.IsCancellationRequested)
             {
-                UdpReceiveResult result = await _udpClient.ReceiveAsync(cancellationToken);
-                UnionPacket packet = result.Buffer.ToPacket();
+                UdpReceiveResult result;
+                UnionPacket packet;
+                try
+                {
+                    result = await _udpClient.ReceiveAsync(cancellationToken);
+                    packet = result.Buffer.ToPacket();
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    yield break;
+                }
+                catch (SocketException) when (cancellationToken.IsCancellationRequested || _disposed)
+                {
+                    yield break;
+                }
+                catch (Exception) when (!cancellationToken.IsCancellationRequested)
+                {
+                    // Ignore malformed datagrams and continue listening.
+                    continue;
+                }
+
+                var packetSessionId = packet.Header.SessionUID;
+                if (sessionId.HasValue && sessionId.Value != packetSessionId)
+                {
+                    statusByCar.Clear();
+                    lapByCar.Clear();
+                    participantsByCar.Clear();
+                }
+
+                sessionId = packetSessionId;
 
                 switch (packet.PacketType)
                 {
                     case PacketType.CarStatus
                         when packet.TryGetCarStatusDataPacket(out var statusPacket):
-                        status = statusPacket.CarStatusData[statusPacket.Header.PlayerCarIndex];
+                        for (int carIndex = 0; carIndex < statusPacket.CarStatusData.Length; carIndex++)
+                        {
+                            statusByCar[carIndex] = statusPacket.CarStatusData[carIndex];
+                        }
                         break;
 
                     case PacketType.LapData
                         when packet.TryGetLapDataPacket(out var lapPacket):
-                        lap = lapPacket.LapData[lapPacket.Header.PlayerCarIndex];
+                        for (int carIndex = 0; carIndex < lapPacket.LapData.Length; carIndex++)
+                        {
+                            lapByCar[carIndex] = lapPacket.LapData[carIndex];
+                        }
                         break;
 
                     case PacketType.Participants
                         when packet.TryGetParticipantsDataPacket(out var participantsPacket):
-                        participants = participantsPacket.Participants;
+                        for (int carIndex = 0; carIndex < participantsPacket.Participants.Length; carIndex++)
+                        {
+                            participantsByCar[carIndex] = participantsPacket.Participants[carIndex];
+                        }
                         break;
 
                     case PacketType.CarTelemetry
@@ -67,11 +106,14 @@ namespace F1Telemetry.Infrastructure.Services
                             yield return Map(
                                 telemetryPacket.CarTelemetryData[carIndex],
                                 carIndex + 1,
-                                participants.HasValue && carIndex < participants.Value.Length
-                                    ? participants.Value[carIndex].RaceNumber
+                                participantsByCar.TryGetValue(carIndex, out var participant)
+                                    ? participant.RaceNumber
                                     : 0,
-                                status,
-                                lap);
+                                participantsByCar.TryGetValue(carIndex, out participant) ? participant : null,
+                                statusByCar.TryGetValue(carIndex, out var status) ? status : null,
+                                lapByCar.TryGetValue(carIndex, out var lap) ? lap : null,
+                                sessionId.Value,
+                                DateTimeOffset.UtcNow);
                         }
                         break;
                 }
@@ -82,18 +124,28 @@ namespace F1Telemetry.Infrastructure.Services
             CarTelemetryData telemetry,
             int driverId,
             int raceNumber,
+            ParticipantData? participant,
             CarStatusData? status,
-            LapData? lap)
+            LapData? lap,
+            ulong sessionId,
+            DateTimeOffset timestamp)
         {
             return new TelemetryData
             {
                 DriverId = driverId,
                 RaceNumber = raceNumber,
+                DriverName = participant is null ? string.Empty : participant.Value.Name,
+                TeamId = participant is null ? 0 : (int)participant.Value.Team,
+                NationalityId = participant is null ? 0 : (int)participant.Value.Nationality,
+                Timestamp = timestamp,
+                SessionId = sessionId,
+                IsComplete = status.HasValue && lap.HasValue && participant.HasValue,
+                IsStale = !status.HasValue || !lap.HasValue,
 
                 // Car Telemetry
                 Speed = telemetry.Speed,
-                Throttle = telemetry.Throttle,
-                Brake = telemetry.Brake,
+                Throttle = telemetry.Throttle * 100,
+                Brake = telemetry.Brake * 100,
                 SteeringAngle = telemetry.Steer,
                 Gear = telemetry.Gear,
                 Rpm = telemetry.EngineRPM,

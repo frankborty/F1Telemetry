@@ -3,6 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:F1Telemetry.App">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="WindowBrush" Color="#101319"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#1A2029"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#F3F5F7"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#9AA5B1"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
     </Application.Resources>
 </Application>

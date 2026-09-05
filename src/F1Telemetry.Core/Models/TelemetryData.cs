@@ -2,7 +2,10 @@
 {
     public sealed class TelemetryData
     {
-        public DateTimeOffset Timestamp { get; init; }
+        public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
+        public ulong SessionId { get; init; }
+        public bool IsStale { get; init; }
+        public bool IsComplete { get; init; }
 
         // =========================
         // Driver Information
@@ -93,5 +96,22 @@
         public int Sector { get; init; }
         public TimeSpan LapTime { get; init; }
 
+    }
+
+    public enum TelemetrySourceKind
+    {
+        Unknown,
+        Fake,
+        F1
+    }
+
+    public enum TelemetryConnectionStatus
+    {
+        Starting,
+        Waiting,
+        Connected,
+        Disconnected,
+        Error,
+        Fake
     }
 }

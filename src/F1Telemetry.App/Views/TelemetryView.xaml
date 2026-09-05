@@ -1,51 +1,55 @@
-﻿<UserControl x:Class="F1Telemetry.App.Views.TelemetryView"
+<UserControl x:Class="F1Telemetry.App.Views.TelemetryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:F1Telemetry.App.Views"
-             mc:Ignorable="d" 
-             MaxWidth="350"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewmodels="clr-namespace:F1Telemetry.App.ViewModels"
              xmlns:converters="clr-namespace:F1Telemetry.App.Converters"
-             d:DataContext="{d:DesignInstance Type=viewmodels:TelemetryViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <UserControl.Resources>
-        <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
-    </UserControl.Resources>
-
-    <Grid>
-        <StackPanel Margin="20">
-            <UniformGrid Columns="3" Rows="2">
-                <StackPanel>
-                    <TextBlock Text="SPEED" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Telemetry.Speed}" FontSize="32" HorizontalAlignment="Center" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="RPM" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Telemetry.Rpm}" FontSize="32" HorizontalAlignment="Center" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="GEAR" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Telemetry.Gear}" FontSize="32" HorizontalAlignment="Center" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="THROTTLE" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Telemetry.Throttle}" FontSize="32" HorizontalAlignment="Center" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="BRAKE" HorizontalAlignment="Center" />
-                    <TextBlock Text="{Binding Telemetry.Brake}" FontSize="32" HorizontalAlignment="Center" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="DRS" HorizontalAlignment="Center" />
-                    <Ellipse Width="30"
-                         Height="30"
-                         HorizontalAlignment="Center"   
-                         Fill="{Binding Telemetry.DrsActive, Converter={StaticResource BoolToBrushConverter}}"/>
-                </StackPanel>
-            </UniformGrid>
-        </StackPanel>
-    </Grid>
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=viewmodels:TelemetryViewModel}">
+  <UserControl.Resources>
+    <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+  </UserControl.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="12">
+      <TextBlock Text="{Binding Telemetry.DriverName, TargetNullValue=IN ATTESA DI TELEMETRIA}" FontSize="16" FontWeight="Bold"/>
+      <UniformGrid Columns="3" Margin="0,8">
+        <StackPanel><TextBlock Text="SPEED" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Speed, StringFormat={}{0:0} km/h}" FontSize="26" FontWeight="Bold"/></StackPanel>
+        <StackPanel><TextBlock Text="RPM" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Rpm, StringFormat={}{0:0}}" FontSize="26" FontWeight="Bold"/></StackPanel>
+        <StackPanel><TextBlock Text="GEAR" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Gear, StringFormat={}{0:0}}" FontSize="26" FontWeight="Bold"/></StackPanel>
+      </UniformGrid>
+      <TextBlock Text="PEDALI" FontWeight="Bold" Margin="0,6,0,2"/>
+      <TextBlock Text="THROTTLE" Foreground="{StaticResource MutedBrush}"/><ProgressBar Value="{Binding Telemetry.Throttle}" Maximum="100" Height="12"/>
+      <TextBlock Text="BRAKE" Foreground="{StaticResource MutedBrush}"/><ProgressBar Value="{Binding Telemetry.Brake}" Maximum="100" Height="12" Foreground="#E45757"/>
+      <UniformGrid Columns="3" Margin="0,8">
+        <StackPanel><TextBlock Text="DRS" Foreground="{StaticResource MutedBrush}"/><Ellipse Width="18" Height="18" HorizontalAlignment="Left" Fill="{Binding Telemetry.DrsActive, Converter={StaticResource BoolToBrushConverter}}"/></StackPanel>
+        <StackPanel><TextBlock Text="STEERING" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.SteeringAngle, StringFormat={}{0:0.0}°}"/></StackPanel>
+        <StackPanel><TextBlock Text="CLUTCH" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Clutch, StringFormat={}{0:0}%}"/></StackPanel>
+      </UniformGrid>
+      <Separator Margin="0,4"/>
+      <UniformGrid Columns="3">
+        <StackPanel><TextBlock Text="LAP" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Lap}"/></StackPanel>
+        <StackPanel><TextBlock Text="SECTOR" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.Sector}"/></StackPanel>
+        <StackPanel><TextBlock Text="LAP TIME" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.LapTime, StringFormat={}{0:hh\\:mm\\:ss\\.fff}}"/></StackPanel>
+      </UniformGrid>
+      <UniformGrid Columns="3" Margin="0,8">
+        <StackPanel><TextBlock Text="FUEL" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.FuelRemaining, StringFormat={}{0:0.0} L}"/></StackPanel>
+        <StackPanel><TextBlock Text="BATTERY" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.BatteryLevel, StringFormat={}{0:0.0}}"/></StackPanel>
+        <StackPanel><TextBlock Text="ENGINE" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.EngineTemperature, StringFormat={}{0:0} °C}"/></StackPanel>
+      </UniformGrid>
+      <TextBlock Text="ERS" FontWeight="Bold" Margin="0,4,0,2"/>
+      <UniformGrid Columns="2">
+        <StackPanel><TextBlock Text="DEPLOY" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.ErsDeployment, StringFormat={}{0:0.0}}"/></StackPanel>
+        <StackPanel><TextBlock Text="RECOVERY" Foreground="{StaticResource MutedBrush}"/><TextBlock Text="{Binding Telemetry.ErsRecovery, StringFormat={}{0:0.0}}"/></StackPanel>
+      </UniformGrid>
+      <GroupBox Header="TYRES / BRAKES" Foreground="{StaticResource TextBrush}" Margin="0,4">
+        <UniformGrid Columns="4" Margin="4">
+          <StackPanel><TextBlock Text="FL" FontWeight="Bold"/><TextBlock Text="{Binding Telemetry.FrontLeftTyreSurfaceTemperature, StringFormat={}{0:0}°C}"/><TextBlock Text="{Binding Telemetry.FrontLeftTyrePressure, StringFormat={}{0:0.0} psi}"/><TextBlock Text="{Binding Telemetry.FrontLeftBrakeTemperature, StringFormat={}{0:0}°C}"/></StackPanel>
+          <StackPanel><TextBlock Text="FR" FontWeight="Bold"/><TextBlock Text="{Binding Telemetry.FrontRightTyreSurfaceTemperature, StringFormat={}{0:0}°C}"/><TextBlock Text="{Binding Telemetry.FrontRightTyrePressure, StringFormat={}{0:0.0} psi}"/><TextBlock Text="{Binding Telemetry.FrontRightBrakeTemperature, StringFormat={}{0:0}°C}"/></StackPanel>
+          <StackPanel><TextBlock Text="RL" FontWeight="Bold"/><TextBlock Text="{Binding Telemetry.RearLeftTyreSurfaceTemperature, StringFormat={}{0:0}°C}"/><TextBlock Text="{Binding Telemetry.RearLeftTyrePressure, StringFormat={}{0:0.0} psi}"/><TextBlock Text="{Binding Telemetry.RearLeftBrakeTemperature, StringFormat={}{0:0}°C}"/></StackPanel>
+          <StackPanel><TextBlock Text="RR" FontWeight="Bold"/><TextBlock Text="{Binding Telemetry.RearRightTyreSurfaceTemperature, StringFormat={}{0:0}°C}"/><TextBlock Text="{Binding Telemetry.RearRightTyrePressure, StringFormat={}{0:0.0} psi}"/><TextBlock Text="{Binding Telemetry.RearRightBrakeTemperature, StringFormat={}{0:0}°C}"/></StackPanel>
+        </UniformGrid>
+      </GroupBox>
+      <TextBlock Text="{Binding Telemetry.Timestamp, StringFormat=Aggiornato: {0:HH\:mm\:ss}}" Foreground="{StaticResource MutedBrush}" FontSize="10" HorizontalAlignment="Right"/>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>

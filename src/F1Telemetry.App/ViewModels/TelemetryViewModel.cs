@@ -18,12 +18,16 @@ namespace F1Telemetry.App.ViewModels
 
                 _latestTelemetry = null;
                 Telemetry = null;
+                _history.Clear();
+                OnPropertyChanged(nameof(History));
             }
         }
 
         private readonly DispatcherTimer _uiTimer;
         private TelemetryData? _latestTelemetry;
         private TelemetryData? _telemetry;
+        private readonly Queue<(DateTimeOffset Timestamp, double Speed, double Rpm)> _history = new();
+        public IReadOnlyCollection<(DateTimeOffset Timestamp, double Speed, double Rpm)> History => _history;
 
         public TelemetryData? Telemetry
         {
@@ -45,19 +49,33 @@ namespace F1Telemetry.App.ViewModels
 
         private void OnUiTimerTick(object? sender, EventArgs e)
         {
-            if (_latestTelemetry is null)
+            var latestTelemetry = Volatile.Read(ref _latestTelemetry);
+            if (latestTelemetry is null)
             {
                 return;
             }
 
-            Telemetry = _latestTelemetry;
+            Telemetry = latestTelemetry;
+            AddHistory(latestTelemetry);
+        }
+
+        private void AddHistory(TelemetryData telemetry)
+        {
+            _history.Enqueue((telemetry.Timestamp, telemetry.Speed, telemetry.Rpm));
+            var cutoff = telemetry.Timestamp - TimeSpan.FromSeconds(60);
+            while (_history.Count > 600 || (_history.Count > 0 && _history.Peek().Timestamp < cutoff))
+            {
+                _history.Dequeue();
+            }
+
+            OnPropertyChanged(nameof(History));
         }
 
         public void UpdateTelemetry(TelemetryData telemetryData)
         {
             if (telemetryData.RaceNumber != RaceNumber)
                 return;
-            _latestTelemetry = telemetryData;
+            Interlocked.Exchange(ref _latestTelemetry, telemetryData);
         }
 
         public void Dispose()

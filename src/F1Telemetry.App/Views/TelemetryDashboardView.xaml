@@ -8,7 +8,8 @@
              d:DataContext="{d:DesignInstance Type=viewmodels:TelemetryDashboardViewModel}"
              mc:Ignorable="d">
 
-    <Grid>
+    <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="4">
+      <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -24,15 +25,28 @@
                     BorderThickness="0"
                     Cursor="Hand"/>
 
-            <ComboBox Width="200"
+            <StackPanel Orientation="Horizontal">
+              <ComboBox Width="220"
                       HorizontalAlignment="Left"
-                      ItemsSource="{Binding Drivers}"
-                      SelectedItem="{Binding SelectedDriver}"
-                      DisplayMemberPath="Driver"/>
+                       ItemsSource="{Binding Drivers}"
+                       SelectedItem="{Binding SelectedDriver}"
+                       DisplayMemberPath="Driver"
+                       Background="#27303B" Foreground="White">
+                <ComboBox.ItemContainerStyle>
+                  <Style TargetType="ComboBoxItem">
+                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Padding" Value="6,4"/>
+                  </Style>
+                </ComboBox.ItemContainerStyle>
+              </ComboBox>
+              <TextBlock Text="{Binding TelemetryVM.Telemetry.DriverName}" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+            </StackPanel>
         </DockPanel>
 
         <views:TelemetryView
             Grid.Row="1"
             DataContext="{Binding TelemetryVM}" />
-    </Grid>
+      </Grid>
+    </Border>
 </UserControl>

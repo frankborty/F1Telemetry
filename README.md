@@ -74,7 +74,7 @@ F1Telemetry/
 │   ├── F1Telemetry.App/            # WPF UI (composition root, MVVM)
 │   ├── F1Telemetry.Core/           # Modello dati, interfacce, orchestrazione
 │   └── F1Telemetry.Infrastructure/ # Sorgente UDP reale (F1Game.UDP)
-├── tests/                          # Test (da implementare)
+├── tests/                          # Test automatici Core e Infrastructure
 ├── F1Telemetry.slnx                # Solution file
 ├── LICENSE.txt                     # Licenza MIT
 └── README.md
@@ -125,10 +125,11 @@ Oppure in Visual Studio: apri `F1Telemetry.slnx`, imposta `F1Telemetry.App` come
 - ✅ Pipeline push-based (Producer/Consumer via `Channel<T>`)
 - ✅ Sorgente UDP reale (`F1TelemetrySource`) con merging di CarTelemetry + CarStatus + LapData
 - ✅ Sorgente simulata e switch a runtime via configurazione
-- ✅ Dashboard UI dark theme completa
+- ✅ Dashboard UI dark theme con telemetria live, gomme, freni, ERS e carburante
 - ✅ Chiusura esplicita del socket UDP (`IDisposable`, smaltita dalla DI) e porta UDP configurabile
-- ⬜ Test automatici (`tests/` vuota)
-- ⬜ Unità di misura coerenti tra sorgente reale e simulata (batteria/ERS)
+- ✅ Test automatici di base per servizio, fake source, stato connessione e cancellazione UDP
+- ⬜ Grafici storici, replay e analisi strategica
+- ✅ Unità di misura coerenti per input, percentuali, timestamp e stato snapshot
 
 ## Licenza
 

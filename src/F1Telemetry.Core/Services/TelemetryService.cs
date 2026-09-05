@@ -8,6 +8,8 @@ namespace F1Telemetry.Core.Services
     public sealed class TelemetryService : ITelemetryService
     {
         private readonly Channel<TelemetryData> _channel;
+        private readonly object _latestLock = new();
+        private readonly Dictionary<int, TelemetryData> _latestByRaceNumber = new();
 
         public TelemetryService()
         {
@@ -33,7 +35,23 @@ namespace F1Telemetry.Core.Services
 
         public ValueTask WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default)
         {
+            lock (_latestLock)
+            {
+                if (telemetryData.RaceNumber > 0)
+                {
+                    _latestByRaceNumber[telemetryData.RaceNumber] = telemetryData;
+                }
+            }
+
             return _channel.Writer.WriteAsync(telemetryData, cancellationToken);
+        }
+
+        public bool TryGetLatest(int raceNumber, out TelemetryData? telemetryData)
+        {
+            lock (_latestLock)
+            {
+                return _latestByRaceNumber.TryGetValue(raceNumber, out telemetryData);
+            }
         }
     }
 }

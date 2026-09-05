@@ -8,7 +8,9 @@
         xmlns:converters="clr-namespace:F1Telemetry.App.Converters" xmlns:views="clr-namespace:F1Telemetry.App.Views"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="F1 Telemetry" Height="720" Width="1200"
+        MinHeight="450" MinWidth="650"
+        Background="{StaticResource WindowBrush}">
 
     <Window.Resources>
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
@@ -20,21 +22,27 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <Button Grid.Column="0" Content="+" HorizontalAlignment="Left" Height="50" Width="50" FontSize="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding AddDashboardCommand}"/>
-        </StackPanel>
+        <DockPanel Grid.Row="0" Margin="10">
+            <Button DockPanel.Dock="Right" Content="+ Dashboard" Command="{Binding AddDashboardCommand}"/>
+            <TextBlock Text="F1 TELEMETRY" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+            <TextBlock Text="  |  " Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding ConnectionStatus}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding ConnectionMessage}" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+        </DockPanel>
 
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding TelemetryDashboardVMList}">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl ItemsSource="{Binding TelemetryDashboardVMList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel />
+                 <WrapPanel HorizontalAlignment="Center" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <views:TelemetryDashboardView Grid.Row="1" DataContext="{Binding}" Width="350"/>
+                     <views:TelemetryDashboardView DataContext="{Binding}" Width="380" Margin="6"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>

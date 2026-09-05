@@ -2,7 +2,6 @@
 using F1Telemetry.App.Views;
 using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Services;
-using F1Telemetry.Infrastructure;
 using F1Telemetry.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,10 +26,12 @@ namespace F1Telemetry.App
             int udpPort = int.TryParse(
                 context.Configuration["Telemetry:UdpPort"],
                 out int configuredPort)
+                    && configuredPort is >= 1 and <= 65535
                     ? configuredPort
                     : 20777;
 
             services.AddSingleton<ITelemetryService, TelemetryService>();
+            services.AddSingleton<TelemetryConnectionState>();
             services.AddSingleton<ITelemetrySource>(_ =>
                 string.Equals(source, "F1", StringComparison.OrdinalIgnoreCase)
                     ? new F1TelemetrySource(udpPort)
@@ -55,9 +56,21 @@ namespace F1Telemetry.App
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            await _host.StartAsync();
-            var mainView = _host.Services.GetRequiredService<MainWindowView>();
-            mainView.Show();
+            try
+            {
+                await _host.StartAsync();
+                var mainView = _host.Services.GetRequiredService<MainWindowView>();
+                mainView.Show();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(
+                    $"Impossibile avviare la telemetria:\n{exception.Message}",
+                    "F1 Telemetry",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                Shutdown(-1);
+            }
         }
 
         protected override async void OnExit(ExitEventArgs e)
@@ -70,6 +83,14 @@ namespace F1Telemetry.App
                 mainViewModel.Dispose();
 
                 await _host.StopAsync();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(
+                    $"Errore durante la chiusura:\n{exception.Message}",
+                    "F1 Telemetry",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
             finally
             {

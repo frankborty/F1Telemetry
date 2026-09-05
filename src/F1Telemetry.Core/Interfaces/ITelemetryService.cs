@@ -6,5 +6,6 @@ namespace F1Telemetry.Core.Interfaces
     {
         public IAsyncEnumerable<TelemetryData> GetTelemetryAsync(CancellationToken cancellationToken = default);
         public ValueTask WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default);
+        public bool TryGetLatest(int raceNumber, out TelemetryData? telemetryData);
     }
 }
