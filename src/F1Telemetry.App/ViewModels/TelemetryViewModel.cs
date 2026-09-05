@@ -3,7 +3,7 @@ using System.Windows.Threading;
 
 namespace F1Telemetry.App.ViewModels
 {
-    public class TelemetryViewModel : ViewModelBase
+    public class TelemetryViewModel : ViewModelBase, IDisposable
     {
         private int _raceNumber;
         public int RaceNumber
@@ -58,6 +58,15 @@ namespace F1Telemetry.App.ViewModels
             if (telemetryData.RaceNumber != RaceNumber)
                 return;
             _latestTelemetry = telemetryData;
+        }
+
+        public void Dispose()
+        {
+            _uiTimer?.Stop();
+            if (_uiTimer != null)
+            {
+                _uiTimer.Tick -= OnUiTimerTick;
+            }
         }
     }
 }

@@ -62,10 +62,20 @@ namespace F1Telemetry.App
 
         protected override async void OnExit(ExitEventArgs e)
         {
-            await _host.StopAsync();
-            _host.Dispose();
+            try
+            {
+                var mainViewModel =
+                    _host.Services.GetRequiredService<MainWindowViewModel>();
 
-            base.OnExit(e);
+                mainViewModel.Dispose();
+
+                await _host.StopAsync();
+            }
+            finally
+            {
+                _host.Dispose();
+                base.OnExit(e);
+            }
         }
     }
 }

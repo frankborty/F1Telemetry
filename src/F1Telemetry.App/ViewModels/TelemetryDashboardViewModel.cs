@@ -8,6 +8,7 @@ namespace F1Telemetry.App.ViewModels
 {
     public class TelemetryDashboardViewModel : ViewModelBase, IDisposable
     {
+        private bool _disposed;
         private readonly TelemetryConsumer _telemetryConsumer;
         private readonly Action<TelemetryDashboardViewModel> _removeSelf;
         public TelemetryViewModel TelemetryVM { get; }
@@ -46,6 +47,7 @@ namespace F1Telemetry.App.ViewModels
 
         private void RemoveItself()
         {
+            Dispose();
             _removeSelf(this);
         }
 
@@ -56,7 +58,16 @@ namespace F1Telemetry.App.ViewModels
 
         public void Dispose()
         {
+
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
             _telemetryConsumer.TelemetryReceived -= OnTelemetryReceived;
+            TelemetryVM.Dispose();
         }
     }
 }

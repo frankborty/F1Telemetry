@@ -4,8 +4,9 @@ using System.Windows.Input;
 
 namespace F1Telemetry.App.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IDisposable
     {
+        private bool _disposed;
         private readonly Func<Action<TelemetryDashboardViewModel>, TelemetryDashboardViewModel> _factory;
 
         public ObservableCollection<TelemetryDashboardViewModel> TelemetryDashboardVMList { get; } = new();
@@ -23,6 +24,23 @@ namespace F1Telemetry.App.ViewModels
         {
             var vm = _factory(vm => TelemetryDashboardVMList.Remove(vm));
             TelemetryDashboardVMList.Add(vm);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            foreach (var dashboard in TelemetryDashboardVMList)
+            {
+                dashboard.Dispose();
+            }
+
+            TelemetryDashboardVMList.Clear();
         }
     }
 }
