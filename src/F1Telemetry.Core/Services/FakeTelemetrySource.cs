@@ -49,52 +49,52 @@ namespace F1Telemetry.Core.Services
                         RevLightsPercent = Math.Clamp((rpm - 8000) * 100 / 7000, 0, 100),
                         RevLightsBitValue = 0,
 
-                    // Brakes
-                    FrontLeftBrakeTemperature = 350 + (int)(brake * 650),
-                    FrontRightBrakeTemperature = 350 + (int)(brake * 650),
-                    RearLeftBrakeTemperature = 300 + (int)(brake * 500),
-                    RearRightBrakeTemperature = 300 + (int)(brake * 500),
+                        // Brakes
+                        FrontLeftBrakeTemperature = 350 + (int)(brake * 650),
+                        FrontRightBrakeTemperature = 350 + (int)(brake * 650),
+                        RearLeftBrakeTemperature = 300 + (int)(brake * 500),
+                        RearRightBrakeTemperature = 300 + (int)(brake * 500),
 
-                    // Tyres - surface temperature
-                    FrontLeftTyreSurfaceTemperature = 85 + (int)(throttle * 25),
-                    FrontRightTyreSurfaceTemperature = 85 + (int)(throttle * 25),
-                    RearLeftTyreSurfaceTemperature = 82 + (int)(throttle * 22),
-                    RearRightTyreSurfaceTemperature = 82 + (int)(throttle * 22),
+                        // Tyres - surface temperature
+                        FrontLeftTyreSurfaceTemperature = 85 + (int)(throttle * 25),
+                        FrontRightTyreSurfaceTemperature = 85 + (int)(throttle * 25),
+                        RearLeftTyreSurfaceTemperature = 82 + (int)(throttle * 22),
+                        RearRightTyreSurfaceTemperature = 82 + (int)(throttle * 22),
 
-                    // Tyres - inner temperature
-                    FrontLeftTyreInnerTemperature = 80 + (int)(throttle * 20),
-                    FrontRightTyreInnerTemperature = 80 + (int)(throttle * 20),
-                    RearLeftTyreInnerTemperature = 78 + (int)(throttle * 18),
-                    RearRightTyreInnerTemperature = 78 + (int)(throttle * 18),
+                        // Tyres - inner temperature
+                        FrontLeftTyreInnerTemperature = 80 + (int)(throttle * 20),
+                        FrontRightTyreInnerTemperature = 80 + (int)(throttle * 20),
+                        RearLeftTyreInnerTemperature = 78 + (int)(throttle * 18),
+                        RearRightTyreInnerTemperature = 78 + (int)(throttle * 18),
 
-                    // Tyres - pressure
-                    FrontLeftTyrePressure = 21.2 + throttle * 0.5,
-                    FrontRightTyrePressure = 21.2 + throttle * 0.5,
-                    RearLeftTyrePressure = 20.4 + throttle * 0.5,
-                    RearRightTyrePressure = 20.4 + throttle * 0.5,
+                        // Tyres - pressure
+                        FrontLeftTyrePressure = 21.2 + throttle * 0.5,
+                        FrontRightTyrePressure = 21.2 + throttle * 0.5,
+                        RearLeftTyrePressure = 20.4 + throttle * 0.5,
+                        RearRightTyrePressure = 20.4 + throttle * 0.5,
 
-                    // Tyres - surface type
-                    FrontLeftSurfaceType = 1,
-                    FrontRightSurfaceType = 1,
-                    RearLeftSurfaceType = 1,
-                    RearRightSurfaceType = 1,
+                        // Tyres - surface type
+                        FrontLeftSurfaceType = 1,
+                        FrontRightSurfaceType = 1,
+                        RearLeftSurfaceType = 1,
+                        RearRightSurfaceType = 1,
 
-                    // Engine
-                    EngineTemperature = 90 + (int)(throttle * 25),
+                        // Engine
+                        EngineTemperature = 90 + (int)(throttle * 25),
 
-                    // ERS / Battery
-                    BatteryLevel = 45 + Math.Sin(elapsed / 12) * 35,
-                    ErsDeployment = throttle * 100,
-                    ErsRecovery = brake * 35,
+                        // ERS / Battery
+                        BatteryLevel = 45 + Math.Sin(elapsed / 12) * 35,
+                        ErsDeployment = throttle * 100,
+                        ErsRecovery = brake * 35,
 
-                    // Fuel
-                    FuelRemaining = Math.Max(1, 100 - elapsed / 8),
-                    FuelConsumption = 1.5 + throttle * 2,
+                        // Fuel
+                        FuelRemaining = Math.Max(1, 100 - elapsed / 8),
+                        FuelConsumption = 1.5 + throttle * 2,
 
-                    // Lap
-                    Lap = lap,
-                    Sector = sector,
-                    LapTime = TimeSpan.FromSeconds(90 + Math.Sin(elapsed / 15) * 3)
+                        // Lap
+                        Lap = lap,
+                        Sector = sector,
+                        LapTime = TimeSpan.FromSeconds(90 + Math.Sin(elapsed / 15) * 3)
                     };
                 }
             }

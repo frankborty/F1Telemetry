@@ -1,5 +1,4 @@
 ﻿using F1Telemetry.App.ViewModels;
-using F1Telemetry.App.Views;
 using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Services;
 using F1Telemetry.Infrastructure.Services;

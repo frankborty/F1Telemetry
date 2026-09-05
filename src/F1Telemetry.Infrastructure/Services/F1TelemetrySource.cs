@@ -6,7 +6,6 @@ using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Models;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace F1Telemetry.Infrastructure.Services
 {

@@ -1,7 +1,6 @@
 ﻿using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Models;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
 
 namespace F1Telemetry.Core.Services
 {
@@ -19,13 +18,12 @@ namespace F1Telemetry.Core.Services
         {
             try
             {
-                await foreach (var telemetryData in
-                    _telemetryService.GetTelemetryAsync(cancellationToken))
+                await foreach (var telemetryData in _telemetryService.GetTelemetryAsync(cancellationToken))
                 {
                     TelemetryReceived?.Invoke(telemetryData);
                 }
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested){ }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using F1Telemetry.App.ViewModels;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace F1Telemetry.App.Views
 {

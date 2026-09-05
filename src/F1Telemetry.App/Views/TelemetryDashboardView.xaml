@@ -30,8 +30,12 @@
                       HorizontalAlignment="Left"
                        ItemsSource="{Binding Drivers}"
                        SelectedItem="{Binding SelectedDriver}"
-                       DisplayMemberPath="Driver"
-                       Background="#27303B" Foreground="White">
+                       Background="White" Foreground="#111827">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Driver}" Foreground="#111827" Background="White"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
                 <ComboBox.ItemContainerStyle>
                   <Style TargetType="ComboBoxItem">
                     <Setter Property="Foreground" Value="#111827"/>

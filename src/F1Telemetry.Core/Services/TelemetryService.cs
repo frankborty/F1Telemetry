@@ -1,6 +1,5 @@
 ﻿using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Models;
-using System.Diagnostics;
 using System.Threading.Channels;
 
 namespace F1Telemetry.Core.Services

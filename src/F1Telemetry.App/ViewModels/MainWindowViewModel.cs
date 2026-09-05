@@ -1,9 +1,9 @@
 ﻿using F1Telemetry.App.Commands;
+using F1Telemetry.Core.Models;
+using F1Telemetry.Core.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Threading;
-using F1Telemetry.Core.Models;
-using F1Telemetry.Core.Services;
 
 namespace F1Telemetry.App.ViewModels
 {
