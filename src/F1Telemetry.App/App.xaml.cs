@@ -10,9 +10,6 @@ using System.Windows;
 
 namespace F1Telemetry.App
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private readonly IHost _host;
@@ -39,24 +36,20 @@ namespace F1Telemetry.App
                     ? new F1TelemetrySource(udpPort)
                     : new FakeTelemetrySource());
 
-
-            /********************************************************/
-
             services.AddHostedService<TelemetryProducer>();
             services.AddSingleton<TelemetryConsumer>();
             services.AddHostedService(sp => sp.GetRequiredService<TelemetryConsumer>());
 
-
             services.AddSingleton<MainWindowView>();
             services.AddSingleton<MainWindowViewModel>();
 
-            services.AddTransient<TelemetryViewModel>();
-            services.AddTransient<TelemetryDashboardViewModel>();
-            services.AddSingleton<Func<TelemetryDashboardViewModel>>(sp => () => sp.GetRequiredService<TelemetryDashboardViewModel>());
-
-            /********************************************************/
-
-
+            services.AddSingleton<Func<Action<TelemetryDashboardViewModel>, TelemetryDashboardViewModel>>(
+                sp => removeAction =>
+                {
+                    var consumer = sp.GetRequiredService<TelemetryConsumer>();
+                    var telemetryVm = new TelemetryViewModel(0);
+                    return new TelemetryDashboardViewModel(consumer, telemetryVm, removeAction);
+                });
         }
 
         protected override async void OnStartup(StartupEventArgs e)
@@ -75,5 +68,4 @@ namespace F1Telemetry.App
             base.OnExit(e);
         }
     }
-
 }

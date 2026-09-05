@@ -17,15 +17,6 @@
 
     <Grid>
         <StackPanel Margin="20">
-            <ComboBox Grid.Row="0"
-                  Width="200"
-                  Margin="10"
-                  HorizontalAlignment="Left"
-                  ItemsSource="{Binding Drivers}"
-                  SelectedItem="{Binding SelectedDriver}"
-                  DisplayMemberPath="Driver"/>
-
-            <TextBlock Text="{Binding SelectedDriver.Driver}" FontSize="18" d:Text="Driver Name" HorizontalAlignment="Center" Margin="0,0,0,10" />
             <UniformGrid Columns="3" Rows="2">
                 <StackPanel>
                     <TextBlock Text="SPEED" HorizontalAlignment="Center" />

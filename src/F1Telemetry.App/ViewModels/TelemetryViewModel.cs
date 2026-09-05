@@ -1,5 +1,4 @@
 ﻿using F1Telemetry.Core.Models;
-using F1Telemetry.Infrastructure.Data;
 using System.Windows.Threading;
 
 namespace F1Telemetry.App.ViewModels
@@ -17,27 +16,10 @@ namespace F1Telemetry.App.ViewModels
                     return;
                 }
 
-                // Evita di mostrare ancora i dati del pilota precedente.
                 _latestTelemetry = null;
                 Telemetry = null;
             }
         }
-        private DriverInfo? _selectedDriver;
-        public DriverInfo? SelectedDriver
-        {
-            get => _selectedDriver;
-            set
-            {
-                if (!SetProperty(ref _selectedDriver, value) || value is null)
-                {
-                    return;
-                }
-
-                RaceNumber = value.RaceNumber;
-            }
-        }
-
-        public IReadOnlyList<DriverInfo> Drivers { get; } = DriverData.Drivers;
 
         private readonly DispatcherTimer _uiTimer;
         private TelemetryData? _latestTelemetry;
@@ -49,9 +31,9 @@ namespace F1Telemetry.App.ViewModels
             private set => SetProperty(ref _telemetry, value);
         }
 
-        public TelemetryViewModel()
+        public TelemetryViewModel(int driverId)
         {
-            RaceNumber = Drivers[0].RaceNumber;
+            RaceNumber = driverId;
             _uiTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(16)

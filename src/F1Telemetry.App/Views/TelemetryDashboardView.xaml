@@ -14,9 +14,25 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <DockPanel Grid.Row="0" Margin="10">
+            <Button DockPanel.Dock="Right"
+                    Content="X"
+                    Width="25" Height="25"
+                    FontSize="12"
+                    Command="{Binding RemoveCommand}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"/>
+
+            <ComboBox Width="200"
+                      HorizontalAlignment="Left"
+                      ItemsSource="{Binding Drivers}"
+                      SelectedItem="{Binding SelectedDriver}"
+                      DisplayMemberPath="Driver"/>
+        </DockPanel>
+
         <views:TelemetryView
             Grid.Row="1"
             DataContext="{Binding TelemetryVM}" />
-        
     </Grid>
 </UserControl>

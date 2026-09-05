@@ -6,23 +6,23 @@ namespace F1Telemetry.App.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-
-        public ICommand AddDashboardCommand { get; }
+        private readonly Func<Action<TelemetryDashboardViewModel>, TelemetryDashboardViewModel> _factory;
 
         public ObservableCollection<TelemetryDashboardViewModel> TelemetryDashboardVMList { get; } = new();
 
-        private readonly Func<TelemetryDashboardViewModel> factory;
+        public ICommand AddDashboardCommand { get; }
 
-        public MainWindowViewModel(Func<TelemetryDashboardViewModel> factory)
+        public MainWindowViewModel(Func<Action<TelemetryDashboardViewModel>, TelemetryDashboardViewModel> factory)
         {
-            this.factory = factory;
+            _factory = factory;
             AddDashboardCommand = new RelayCommand(AddDashboard);
             AddDashboard();
         }
 
         private void AddDashboard()
         {
-            TelemetryDashboardVMList.Add(factory());
+            var vm = _factory(vm => TelemetryDashboardVMList.Remove(vm));
+            TelemetryDashboardVMList.Add(vm);
         }
     }
 }
