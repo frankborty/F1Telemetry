@@ -1,7 +1,9 @@
 ﻿using F1Telemetry.App.ViewModels;
+using F1Telemetry.App.Views;
 using F1Telemetry.Core.Interfaces;
 using F1Telemetry.Core.Services;
 using F1Telemetry.Infrastructure;
+using F1Telemetry.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
@@ -37,21 +39,31 @@ namespace F1Telemetry.App
                     ? new F1TelemetrySource(udpPort)
                     : new FakeTelemetrySource());
 
-            services.AddSingleton<MainWindow>();
-            services.AddSingleton<MainViewModel>();
+
+            /********************************************************/
+
+            services.AddSingleton<MainWindowView>();
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<TelemetryDashboardViewModel>();
+
+            /********************************************************/
 
             services.AddHostedService<TelemetryProducer>();
             services.AddSingleton<TelemetryConsumer>();
             services.AddHostedService(sp =>
                 sp.GetRequiredService<TelemetryConsumer>());
+
+            services.AddTransient<TelemetryViewModel>(_ => new TelemetryViewModel(0));
+            services.AddTransient<TelemetryView>();
+
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             await _host.StartAsync();
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            var mainView = _host.Services.GetRequiredService<MainWindowView>();
+            mainView.Show();
         }
 
         protected override async void OnExit(ExitEventArgs e)

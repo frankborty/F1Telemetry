@@ -11,8 +11,14 @@ namespace F1Telemetry.Core.Services
 
         public TelemetryService()
         {
-            _channel = Channel.CreateBounded<TelemetryData>(100);
-            Debug.WriteLine($"TelemetryService: {GetHashCode()}");
+            _channel = Channel.CreateBounded<TelemetryData>(
+           new BoundedChannelOptions(256)
+           {
+               SingleWriter = true,
+               SingleReader = true,
+               FullMode = BoundedChannelFullMode.DropOldest,
+               AllowSynchronousContinuations = false
+           });
         }
 
         public async IAsyncEnumerable<TelemetryData> GetTelemetryAsync(
@@ -25,9 +31,9 @@ namespace F1Telemetry.Core.Services
             }
         }
 
-        public async Task WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default)
+        public ValueTask WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default)
         {
-            await _channel.Writer.WriteAsync(telemetryData, cancellationToken);
+            return _channel.Writer.WriteAsync(telemetryData, cancellationToken);
         }
     }
 }

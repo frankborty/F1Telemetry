@@ -1,19 +1,24 @@
-﻿using F1Telemetry.App.Commands;
-using F1Telemetry.Core.Models;
-using System.Windows.Input;
+﻿using F1Telemetry.Core.Models;
 using System.Windows.Threading;
 
 namespace F1Telemetry.App.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class TelemetryViewModel : ViewModelBase
     {
+        private readonly int _driverId;
         private readonly DispatcherTimer _uiTimer;
-        private TelemetryData? _telemetry;
         private TelemetryData? _latestTelemetry;
-        public ICommand ResetCommand { get; }
+        private TelemetryData? _telemetry;
 
-        public MainViewModel()
+        public TelemetryData? Telemetry
         {
+            get => _telemetry;
+            private set => SetProperty(ref _telemetry, value);
+        }
+
+        public TelemetryViewModel(int driverId)
+        {
+            _driverId = driverId;
             _uiTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(16)
@@ -21,13 +26,6 @@ namespace F1Telemetry.App.ViewModels
 
             _uiTimer.Tick += OnUiTimerTick;
             _uiTimer.Start();
-            ResetCommand = new RelayCommand(Reset);
-        }
-
-        public TelemetryData? Telemetry
-        {
-            get => _telemetry;
-            private set => SetProperty(ref _telemetry, value);
         }
 
         private void OnUiTimerTick(object? sender, EventArgs e)
@@ -42,13 +40,9 @@ namespace F1Telemetry.App.ViewModels
 
         public void UpdateTelemetry(TelemetryData telemetryData)
         {
+            if (telemetryData.DriverId != _driverId)
+                return;
             _latestTelemetry = telemetryData;
-        }
-
-        private void Reset()
-        {
-            _latestTelemetry = null;
-            Telemetry = null;
         }
     }
 }

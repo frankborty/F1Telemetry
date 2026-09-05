@@ -7,7 +7,7 @@ using F1Telemetry.Core.Models;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 
-namespace F1Telemetry.Infrastructure
+namespace F1Telemetry.Infrastructure.Services
 {
     public sealed class F1TelemetrySource : ITelemetrySource, IDisposable
     {
@@ -36,6 +36,7 @@ namespace F1Telemetry.Infrastructure
         {
             CarStatusData? status = null;
             LapData? lap = null;
+            ParticipantData? participant = null;
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -46,23 +47,22 @@ namespace F1Telemetry.Infrastructure
                 {
                     case PacketType.CarStatus
                         when packet.TryGetCarStatusDataPacket(out var statusPacket):
-
                         status = statusPacket.CarStatusData[statusPacket.Header.PlayerCarIndex];
                         break;
 
                     case PacketType.LapData
                         when packet.TryGetLapDataPacket(out var lapPacket):
-
                         lap = lapPacket.LapData[lapPacket.Header.PlayerCarIndex];
                         break;
 
                     case PacketType.CarTelemetry
                         when packet.TryGetCarTelemetryDataPacket(out var telemetryPacket):
+                        var player = telemetryPacket.CarTelemetryData[telemetryPacket.Header.PlayerCarIndex];
+                        if (participant is not null)
+                        {
+                            yield return Map(player, status, lap);
+                        }
 
-                        var player = telemetryPacket.CarTelemetryData[
-                            telemetryPacket.Header.PlayerCarIndex];
-
-                        yield return Map(player, status, lap);
                         break;
                 }
             }
@@ -72,8 +72,6 @@ namespace F1Telemetry.Infrastructure
         {
             return new TelemetryData
             {
-                Timestamp = DateTimeOffset.UtcNow,
-
                 // Car Telemetry
                 Speed = telemetry.Speed,
                 Throttle = telemetry.Throttle,
@@ -131,10 +129,14 @@ namespace F1Telemetry.Infrastructure
 
                 // Lap
                 Lap = lap?.CurrentLapNum ?? 0,
-                Sector = lap is null ? 0 : (int)lap.Value.Sector + 1,
+                Sector = lap is null
+                    ? 0
+                    : (int)lap.Value.Sector + 1,
+
                 LapTime = lap is null
                     ? TimeSpan.Zero
-                    : TimeSpan.FromMilliseconds(lap.Value.CurrentLapTimeInMS)
+                    : TimeSpan.FromMilliseconds(
+                        lap.Value.CurrentLapTimeInMS)
             };
         }
     }

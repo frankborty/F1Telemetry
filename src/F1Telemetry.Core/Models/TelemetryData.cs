@@ -5,6 +5,16 @@
         public DateTimeOffset Timestamp { get; init; }
 
         // =========================
+        // Driver Information
+        // =========================
+
+        public int DriverId { get; init; }
+        public string DriverName { get; init; } = string.Empty;
+        public int TeamId { get; init; }
+        public int RaceNumber { get; init; }
+        public int NationalityId { get; init; }
+
+        // =========================
         // Car Telemetry
         // =========================
 
@@ -82,5 +92,6 @@
         public int Lap { get; init; }
         public int Sector { get; init; }
         public TimeSpan LapTime { get; init; }
+
     }
 }

@@ -5,6 +5,6 @@ namespace F1Telemetry.Core.Interfaces
     public interface ITelemetryService
     {
         public IAsyncEnumerable<TelemetryData> GetTelemetryAsync(CancellationToken cancellationToken = default);
-        public Task WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default);
+        public ValueTask WriteAsync(TelemetryData telemetryData, CancellationToken cancellationToken = default);
     }
 }
