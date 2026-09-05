@@ -5,6 +5,9 @@ namespace F1Telemetry.Core.Services
 {
     public class FakeTelemetrySource : ITelemetrySource
     {
+        private static readonly int[] RaceNumbers =
+            [22, 23, 18, 10, 87, 33, 44, 63, 81, 6, 12, 7, 5, 14, 55, 31, 30, 27, 16];
+
         public async IAsyncEnumerable<TelemetryData> GetTelemetryAsync(
             [System.Runtime.CompilerServices.EnumeratorCancellation]
             CancellationToken cancellationToken = default)
@@ -12,22 +15,26 @@ namespace F1Telemetry.Core.Services
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(100, cancellationToken);
-                yield return new TelemetryData
+                for (int driverId = 1; driverId <= 19; driverId++)
                 {
-                    Timestamp = DateTimeOffset.UtcNow,
+                    yield return new TelemetryData
+                    {
+                        Timestamp = DateTimeOffset.UtcNow,
+                        DriverId = driverId,
+                        RaceNumber = RaceNumbers[driverId - 1],
 
-                    // Car Telemetry
-                    Speed = Random.Shared.NextDouble() * 350,
-                    Throttle = Random.Shared.NextDouble(),
-                    Brake = Random.Shared.NextDouble(),
-                    SteeringAngle = Random.Shared.NextDouble() * 60 - 30,
-                    Gear = Random.Shared.Next(1, 9),
-                    Rpm = Random.Shared.Next(8000, 15000),
-                    Clutch = Random.Shared.Next(0, 101),
+                        // Car Telemetry
+                        Speed = Random.Shared.NextDouble() * 350,
+                        Throttle = Random.Shared.NextDouble(),
+                        Brake = Random.Shared.NextDouble(),
+                        SteeringAngle = Random.Shared.NextDouble() * 60 - 30,
+                        Gear = Random.Shared.Next(1, 9),
+                        Rpm = Random.Shared.Next(8000, 15000),
+                        Clutch = Random.Shared.Next(0, 101),
 
-                    DrsActive = Random.Shared.Next(0, 2) == 1,
-                    RevLightsPercent = Random.Shared.Next(0, 101),
-                    RevLightsBitValue = Random.Shared.Next(),
+                        DrsActive = Random.Shared.Next(0, 2) == 1,
+                        RevLightsPercent = Random.Shared.Next(0, 101),
+                        RevLightsBitValue = Random.Shared.Next(),
 
                     // Brakes
                     FrontLeftBrakeTemperature = Random.Shared.Next(300, 1100),
@@ -74,8 +81,9 @@ namespace F1Telemetry.Core.Services
                     // Lap
                     Lap = Random.Shared.Next(1, 60),
                     Sector = Random.Shared.Next(1, 4),
-                    LapTime = TimeSpan.FromSeconds(Random.Shared.NextDouble() * 60 + 60)
-                };
+                        LapTime = TimeSpan.FromSeconds(Random.Shared.NextDouble() * 60 + 60)
+                    };
+                }
             }
         }
     }

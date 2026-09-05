@@ -42,19 +42,20 @@ namespace F1Telemetry.App
 
             /********************************************************/
 
+            services.AddHostedService<TelemetryProducer>();
+            services.AddSingleton<TelemetryConsumer>();
+            services.AddHostedService(sp => sp.GetRequiredService<TelemetryConsumer>());
+
+
             services.AddSingleton<MainWindowView>();
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<TelemetryDashboardViewModel>();
+
+            services.AddTransient<TelemetryViewModel>();
+            services.AddTransient<TelemetryDashboardViewModel>();
+            services.AddSingleton<Func<TelemetryDashboardViewModel>>(sp => () => sp.GetRequiredService<TelemetryDashboardViewModel>());
 
             /********************************************************/
 
-            services.AddHostedService<TelemetryProducer>();
-            services.AddSingleton<TelemetryConsumer>();
-            services.AddHostedService(sp =>
-                sp.GetRequiredService<TelemetryConsumer>());
-
-            services.AddTransient<TelemetryViewModel>(_ => new TelemetryViewModel(0));
-            services.AddTransient<TelemetryView>();
 
         }
 

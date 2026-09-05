@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:F1Telemetry.App.Views"
              mc:Ignorable="d" 
+             MaxWidth="350"
              xmlns:viewmodels="clr-namespace:F1Telemetry.App.ViewModels"
              xmlns:converters="clr-namespace:F1Telemetry.App.Converters"
              d:DataContext="{d:DesignInstance Type=viewmodels:TelemetryViewModel}"
@@ -16,7 +17,15 @@
 
     <Grid>
         <StackPanel Margin="20">
-            <TextBlock Text="F1 TELEMETRY" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,20" />
+            <ComboBox Grid.Row="0"
+                  Width="200"
+                  Margin="10"
+                  HorizontalAlignment="Left"
+                  ItemsSource="{Binding Drivers}"
+                  SelectedItem="{Binding SelectedDriver}"
+                  DisplayMemberPath="Driver"/>
+
+            <TextBlock Text="{Binding SelectedDriver.Driver}" FontSize="18" d:Text="Driver Name" HorizontalAlignment="Center" Margin="0,0,0,10" />
             <UniformGrid Columns="3" Rows="2">
                 <StackPanel>
                     <TextBlock Text="SPEED" HorizontalAlignment="Center" />
@@ -46,11 +55,6 @@
                          Fill="{Binding Telemetry.DrsActive, Converter={StaticResource BoolToBrushConverter}}"/>
                 </StackPanel>
             </UniformGrid>
-
-            <Button Content="Reset"
-            Command="{Binding ResetCommand}"
-            Width="100"
-            Margin="0,20,0,0" />
         </StackPanel>
     </Grid>
 </UserControl>

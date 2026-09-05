@@ -36,8 +36,7 @@ namespace F1Telemetry.Infrastructure.Services
         {
             CarStatusData? status = null;
             LapData? lap = null;
-            ParticipantData? participant = null;
-
+            Array24<ParticipantData>? participants = null;
             while (!cancellationToken.IsCancellationRequested)
             {
                 UdpReceiveResult result = await _udpClient.ReceiveAsync(cancellationToken);
@@ -55,23 +54,42 @@ namespace F1Telemetry.Infrastructure.Services
                         lap = lapPacket.LapData[lapPacket.Header.PlayerCarIndex];
                         break;
 
+                    case PacketType.Participants
+                        when packet.TryGetParticipantsDataPacket(out var participantsPacket):
+                        participants = participantsPacket.Participants;
+                        break;
+
                     case PacketType.CarTelemetry
                         when packet.TryGetCarTelemetryDataPacket(out var telemetryPacket):
-                        var player = telemetryPacket.CarTelemetryData[telemetryPacket.Header.PlayerCarIndex];
-                        if (participant is not null)
+                        // CarIndex is zero-based in the UDP packet, while the UI catalogue is one-based.
+                        for (int carIndex = 0; carIndex < telemetryPacket.CarTelemetryData.Length; carIndex++)
                         {
-                            yield return Map(player, status, lap);
+                            yield return Map(
+                                telemetryPacket.CarTelemetryData[carIndex],
+                                carIndex + 1,
+                                participants.HasValue && carIndex < participants.Value.Length
+                                    ? participants.Value[carIndex].RaceNumber
+                                    : 0,
+                                status,
+                                lap);
                         }
-
                         break;
                 }
             }
         }
 
-        private static TelemetryData Map(CarTelemetryData telemetry, CarStatusData? status, LapData? lap)
+        private static TelemetryData Map(
+            CarTelemetryData telemetry,
+            int driverId,
+            int raceNumber,
+            CarStatusData? status,
+            LapData? lap)
         {
             return new TelemetryData
             {
+                DriverId = driverId,
+                RaceNumber = raceNumber,
+
                 // Car Telemetry
                 Speed = telemetry.Speed,
                 Throttle = telemetry.Throttle,

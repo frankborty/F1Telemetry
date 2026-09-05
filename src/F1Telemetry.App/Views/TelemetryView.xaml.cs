@@ -11,26 +11,9 @@ namespace F1Telemetry.App.Views
     /// </summary>
     public partial class TelemetryView : UserControl
     {
-        private readonly TelemetryConsumer _telemetryConsumer;
-        private readonly TelemetryViewModel _viewModel;
-
-        public TelemetryView(
-            TelemetryConsumer telemetryConsumer,
-            TelemetryViewModel viewModel)
+        public TelemetryView()
         {
             InitializeComponent();
-
-            _telemetryConsumer = telemetryConsumer;
-            _viewModel = viewModel;
-
-            DataContext = viewModel;
-
-            _telemetryConsumer.TelemetryReceived += OnTelemetryReceived;
-        }
-
-        private void OnTelemetryReceived(TelemetryData telemetryData)
-        {
-            _viewModel.UpdateTelemetry(telemetryData);
         }
     }
 }

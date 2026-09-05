@@ -15,6 +15,26 @@
     </Window.Resources>
 
     <Grid>
-        <views:TelemetryDashboardView DataContext="{Binding TelemetryDashboardVM}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+            <Button Grid.Column="0" Content="+" HorizontalAlignment="Left" Height="50" Width="50" FontSize="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding AddDashboardCommand}"/>
+        </StackPanel>
+
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding TelemetryDashboardVMList}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <views:TelemetryDashboardView Grid.Row="1" DataContext="{Binding}" Width="350"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Window>

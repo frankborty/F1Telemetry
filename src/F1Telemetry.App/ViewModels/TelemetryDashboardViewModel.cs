@@ -1,34 +1,25 @@
 ﻿using F1Telemetry.Core.Models;
+using F1Telemetry.Core.Services;
 using F1Telemetry.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace F1Telemetry.App.ViewModels
 {
     public class TelemetryDashboardViewModel : ViewModelBase
     {
-        private int _selectedDriverId;
+        private readonly TelemetryConsumer _telemetryConsumer;
+        public TelemetryViewModel TelemetryVM { get; }
 
-        public int SelectedDriverId
+        public TelemetryDashboardViewModel(TelemetryConsumer telemetryConsumer, TelemetryViewModel telemetryViewModel)
         {
-            get => _selectedDriverId;
-            set => SetProperty(ref _selectedDriverId, value);
+            _telemetryConsumer = telemetryConsumer;
+            TelemetryVM = telemetryViewModel;
+            _telemetryConsumer.TelemetryReceived += OnTelemetryReceived;
         }
 
-        private DriverInfo? _selectedDriver;
-        public DriverInfo? SelectedDriver
+        private void OnTelemetryReceived(TelemetryData telemetryData)
         {
-            get => _selectedDriver;
-            set => SetProperty(ref _selectedDriver, value);
+            TelemetryVM.UpdateTelemetry(telemetryData);
         }
 
-        public IReadOnlyList<DriverInfo> Drivers { get; } = DriverData.Drivers;
-
-        public TelemetryDashboardViewModel()
-        {
-            SelectedDriverId = 0;
-            SelectedDriver = Drivers[0];
-        }
     }
 }
